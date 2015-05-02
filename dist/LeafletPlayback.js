@@ -350,7 +350,9 @@ L.Playback.TrackController = L.Class.extend({
             marker.addTo(this._map);
             
             this._tracks.push(track);
-        }            
+        }
+        console.log(this._tracks);
+
     },
 
     removeTrack : function(track){

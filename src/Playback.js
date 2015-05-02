@@ -16,7 +16,7 @@ L.Playback = L.Playback.Clock.extend({
             SliderControl : L.Playback.SliderControl
         },
 
-        //? Also a conveniance method from leaflet. Makes merging options a little bit easier as can be seen in the initialise below. L.setOptions() uses these defaults and merges them with the arguments it is given
+        //? Also a convenience method from leaflet. Makes merging options a little bit easier as can be seen in the initialise below. L.setOptions() uses these defaults and merges them with the arguments it is given
 
         options : {
             tickLen: 250,
@@ -134,6 +134,25 @@ L.Playback = L.Playback.Clock.extend({
             if (this.options.tracksLayer) {
                 this._tracksLayer.addLayer(geoJSON);
             }                  
+        },
+
+        addDataStream: function(){
+            // what should this do?... Should it be here?
+            // Let write it without buffer for now. Everything that contains a certain timestamp should be know to the lower program.
+            
+            // Should have somekind of header information. An array with the start and end time of every voyage. 
+
+            function getDataRange() {
+                // this contruct an quick array without the actual data, only voyID, start and end time. It should derive this from the arraykeys
+            }
+
+            function getActualData(voyID) {
+                return (geoJSON, this.getTime());
+            }
+
+            this.addData(geoJSON, this.getTime());
+
+
         },
 
         destroy: function() {

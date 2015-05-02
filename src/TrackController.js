@@ -30,15 +30,13 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
-        console.log(track);
-
         var marker = track.setMarker(timestamp, this.options);
 
         if (marker) {
             marker.addTo(this._map);
             
             this._tracks.push(track);
-        }            
+        }
     },
 
     removeTrack : function(track){
