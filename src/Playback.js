@@ -144,15 +144,28 @@ L.Playback = L.Playback.Clock.extend({
 
             function getDataRange() {
                 // this contruct an quick array without the actual data, only voyID, start and end time. It should derive this from the arraykeys
+                return dataRange;
             }
 
-            function getActualData(voyID) {
-                return (geoJSON, this.getTime());
+            function getFullData(voyID) {
+                // some firebase or socket code.
+                return geoJSON;
             }
 
-            this.addData(geoJSON, this.getTime());
+            function currentData(dataRange, timestamp){
+                // Check dataRange for suitable voyages
+                var currentDataRange = dataRange.map(function(index, voyage){
+                    if (timestamp > voyage.startTime && timestamp < voyage.endTime) {
+                        return voyage;
+                    }
+                });
 
-
+                if (currentDataRange.length == 0) {
+                    this.clearData();
+                } else {
+                    this._trackController.addTrack(getActualData(voyID), this.getTime());
+                }
+            } 
         },
 
         destroy: function() {
