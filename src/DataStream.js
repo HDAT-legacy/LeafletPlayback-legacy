@@ -1,6 +1,7 @@
 L.Playback = L.Playback || {};
 
 L.Playback.DataStream = L.Class.extend({
+    //!!! ENTIRE CLASS MOCKED !!! WILL NOT WORK PROBABLY !!!
 
     // what should this do?... Should it be here?
     // Let write it without buffer for now. Everything that contains a certain 
