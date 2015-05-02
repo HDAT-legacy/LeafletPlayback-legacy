@@ -342,6 +342,8 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
+        console.log(track);
+
         var marker = track.setMarker(timestamp, this.options);
 
         if (marker) {
