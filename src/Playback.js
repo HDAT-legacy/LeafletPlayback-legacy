@@ -137,35 +137,67 @@ L.Playback = L.Playback.Clock.extend({
         },
 
         addDataStream: function(){
+            //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+
             // what should this do?... Should it be here?
             // Let write it without buffer for now. Everything that contains a certain timestamp should be know to the lower program.
             
             // Should have somekind of header information. An array with the start and end time of every voyage. 
 
-            function getDataRange() {
-                // this contruct an quick array without the actual data, only voyID, start and end time. It should derive this from the arraykeys
+            // HORRIBLE PATTERN DO NOT KEEP... Needs to be seperated out.
+
+            function getDataLight() {
+                // this contruct an lightweight array without the actual data, only voyID, start and end time. It should derive this from the arraykeys
                 return dataRange;
-            }
+            };
 
-            function getFullData(voyID) {
-                // some firebase or socket code.
-                return geoJSON;
-            }
+            function getDataFull(trackID, addData) {
+                // some firebase or socket code, for now window with 
+                // mocking asynchronicity (for latency) with timeout
+                var asyncMock = function (trackID){
+                    var track = window.allTracks[trackID];
+                    addData(track, this.getTime());
+                };
 
-            function currentData(dataRange, timestamp){
-                // Check dataRange for suitable voyages
-                var currentDataRange = dataRange.map(function(index, voyage){
-                    if (timestamp > voyage.startTime && timestamp < voyage.endTime) {
-                        return voyage;
+                window.setTimeout(asyncMock, 10, trackID, addtrack);
+
+                return track;
+            };
+
+            function appropriateTracks(dataLight, previousData, timestamp){
+                // Check dataLight for suitable tracks
+                var currentDataRange = dataRange.map(function(index, track){
+                    if (    timestamp > track.startTime 
+                        &&  timestamp < track.endTime) {
+                        return track;
                     }
                 });
+            };
 
-                if (currentDataRange.length == 0) {
+            function addKeepOrRemoveTracks(appropriateTracksRange, _tracks){
+
+                this.toBeAddedTracks = [];
+
+                if (appropriateTracks.length == 0) {
                     this.clearData();
+                    return;
                 } else {
-                    this._trackController.addTrack(getActualData(voyID), this.getTime());
+                    this.toBeAddedTrack = appropriateTracks.map(
+                        function(track, index){
+                            // Check if track is already available,
+                            // If not return the it to be queued for adding
+                            if (!this._trackController.isTrack(track.id)){
+                                return track;
+                            }
+                        }
+                    )
                 }
-            } 
+
+                toBeAddedTracks.map(function(track, index){
+                    // get full data, and use vendor addData to add it to the tracks
+                    getFullData(track.trackID, this.addData);
+                })
+            };
         },
 
         destroy: function() {

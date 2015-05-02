@@ -39,8 +39,26 @@ L.Playback.TrackController = L.Class.extend({
         }
     },
 
-    removeTrack : function(track){
-        //!!! This needs to be written. Tracks must be given some recognisable id by the when created. Or they must simply be compared in de _tracks array. 
+    removeTrack : function(trackID){
+        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+        var trackID = trackID;
+
+        this._tracks.map(function(track, index){
+            if (track.id == trackID) {
+                // remove track without leaving hole in array
+                _tracks.splice(index, 1);
+            }
+        });
+    },
+
+    isTrack : function(isTrackID){
+        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+        // Check if track is available
+        return this._tracks.map(function(track, index){
+            if (track.id == isTrackID){
+                return true;
+            }
+        });
     },
 
     tock : function (timestamp, transitionTime) {
