@@ -8,11 +8,11 @@
   ],
   "description": "This is a Leaflet plug-in that plays back points that have a time stamp synchronized to a clock.",
   "main": "dist/LeafletPlayback.js",
-  "dependencies": {},
-  "devDependencies": {
-    "leaflet": "~0.7",
-    "jquery": ">1.10.2"
+  "dependencies": {
+    "leaflet": "~0.7.0",
+    "jquery": ">=1.10"
   },
+  "devDependencies": {},
   "directories": {
     "example": "demo"
   },
@@ -22,12 +22,14 @@
   },
   "readmeFilename": "README.md",
   "ignore": [
+    "node_modules",
+    "bower_components",
     "config",
     "data",
     "demo",
     "examples",
     "src",
-    ".gitignore",
+    ".*",
     "Gruntfile.js",
     "index.html",
     "package.json",

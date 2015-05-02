@@ -78,14 +78,27 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getTime: function() {
+
+    //? Where is the cursor now?
+
     return this._cursor;
   },
 
   getStartTime: function() {
+
+    //? What does time does the trackController think is the starttime?
+
+    //!!! This is going wrong. A condional needs to be added that checks the options on a start and end time, and if those are not present, default to what the track thinks is the start and end time. 
+
+    //!!! really toroughly test changes to this function. It's important.
+
     return this._trackController.getStartTime();
   },
 
   getEndTime: function() {
+
+    // Idem as getStartTime
+
     return this._trackController.getEndTime();
   },
 

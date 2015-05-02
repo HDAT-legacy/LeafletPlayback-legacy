@@ -10,10 +10,12 @@ L.Playback.TrackController = L.Class.extend({
         this._tracks = [];
 
         // initialize tick points
+        //? Highly interesting thing here. Tracks is null on initialize... Sooo this only runs clearTracks again... Seems like this is trash.
         this.setTracks(tracks);
     },
     
     clearTracks: function(){
+        //? called by setData, does what is expected of it. And by setTracks it seems. Wonder what that's all about.
         while (this._tracks.length > 0) {
             var track = this._tracks.pop();
             var marker = track.getMarker();
@@ -25,7 +27,7 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     setTracks : function (tracks) {
-        // reset current tracks
+        //? reset current tracks. Looks like trash because it's only called with no tracks.
         this.clearTracks();
         
         this.addTracks(tracks);
@@ -33,6 +35,8 @@ L.Playback.TrackController = L.Class.extend({
     
     addTracks : function (tracks) {
         // return if nothing is set
+
+        //? Well. this seems straightforward trash... 
         if (!tracks) {
             return;
         }
@@ -49,6 +53,7 @@ L.Playback.TrackController = L.Class.extend({
     // add single track
     addTrack : function (track, timestamp) {
         // return if nothing is set
+        //? Important method.
         if (!track) {
             return;
         }
