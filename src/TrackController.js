@@ -8,10 +8,6 @@ L.Playback.TrackController = L.Class.extend({
         this._map = map;
 
         this._tracks = [];
-
-        // initialize tick points
-        //? Highly interesting thing here. Tracks is null on initialize... Sooo this only runs clearTracks again... Seems like this is trash.
-        this.setTracks(tracks);
     },
     
     clearTracks: function(){
@@ -23,30 +19,6 @@ L.Playback.TrackController = L.Class.extend({
             if (marker){
                 this._map.removeLayer(marker);
             }
-        }            
-    },
-
-    setTracks : function (tracks) {
-        //? reset current tracks. Looks like trash because it's only called with no tracks.
-        this.clearTracks();
-        
-        this.addTracks(tracks);
-    },
-    
-    addTracks : function (tracks) {
-        // return if nothing is set
-
-        //? Well. this seems straightforward trash... 
-        if (!tracks) {
-            return;
-        }
-        
-        if (tracks instanceof Array) {            
-            for (var i = 0, len = tracks.length; i < len; i++) {
-                this.addTrack(tracks[i]);
-            }
-        } else {
-            this.addTrack(tracks);
         }            
     },
     
@@ -65,6 +37,10 @@ L.Playback.TrackController = L.Class.extend({
             
             this._tracks.push(track);
         }            
+    },
+
+    removeTrack : function(track){
+        //!!! This needs to be written. Tracks must be given some recognisable id by the when created. Or they must simply be compared in de _tracks array. 
     },
 
     tock : function (timestamp, transitionTime) {
