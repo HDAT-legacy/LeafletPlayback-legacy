@@ -128,6 +128,21 @@ L.Playback.MoveableMarker = L.Marker.extend({
         if (this._popup) {
             this._popup.setContent(this.getPopupContent() + this._latlng.toString());
         }    
+    },
+
+    toggleMarker: function () {
+        // Some styling to hide and show marker. Basicly just inverting the opacity. 
+        // Needs check wether OPACITY exists on dom util
+        if (L.DomUtil.OPACITY) {
+            if (this._icon) { 
+                this._icon.style[L.DomUtil.OPACITY] =  !this._icon.style[L.DomUtil.OPACITY]; 
+                if (this._popup && this._popup._wrapper)
+                    this._popup._wrapper.style[L.DomUtil.OPACITY] = !this._popup._wrapper.style[L.DomUtil.OPACITY]; 
+            }
+            if (this._shadow) { 
+                this._shadow.style[L.DomUtil.OPACITY] = !this._shadow.style[L.DomUtil.OPACITY] ; 
+            }
+        }
     }
 });
 
@@ -248,29 +263,6 @@ L.Playback.Track = L.Class.extend({
     getEndTime : function () {
         return this._endTime;
     },
-
-    getTickMultiPoint : function () {
-        var t = this.getStartTime();
-        var endT = this.getEndTime();
-        var coordinates = [];
-        var time = [];
-        while (t <= endT) {
-            time.push(t);
-            coordinates.push(this.tick(t));
-            t += this._tickLen;
-        }
-
-        return {
-            type : 'Feature',
-            geometry : {
-                type : 'MultiPoint',
-                coordinates : coordinates
-            },
-            properties : {
-                time : time
-            }
-        };
-    },
     
     tick : function (timestamp) {
         if (timestamp > this._endTime)
@@ -342,8 +334,6 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
-        console.log(track);
-
         var marker = track.setMarker(timestamp, this.options);
 
         if (marker) {
@@ -351,12 +341,28 @@ L.Playback.TrackController = L.Class.extend({
             
             this._tracks.push(track);
         }
-        console.log(this._tracks);
-
     },
 
-    removeTrack : function(track){
-        //!!! This needs to be written. Tracks must be given some recognisable id by the when created. Or they must simply be compared in de _tracks array. 
+    removeTrack : function(trackID){
+        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+        var trackID = trackID;
+
+        this._tracks.map(function(track, index){
+            if (track.id == trackID) {
+                // remove track without leaving hole in array
+                _tracks.splice(index, 1);
+            }
+        });
+    },
+
+    isTrack : function(isTrackID){
+        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+        // Check if track is available
+        return this._tracks.map(function(track, index){
+            if (track.id == isTrackID){
+                return true;
+            }
+        });
     },
 
     tock : function (timestamp, transitionTime) {
@@ -483,18 +489,11 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getTime: function() {
-
-    //? Where is the cursor now?
-
     return this._cursor;
   },
 
   getStartTime: function() {
-
-    //? What does time does the trackController think is the starttime?
-
     //!!! This is going wrong. A condional needs to be added that checks the options on a start and end time, and if those are not present, default to what the track thinks is the start and end time. 
-
     //!!! really toroughly test changes to this function. It's important.
 
     return this._trackController.getStartTime();
@@ -695,6 +694,80 @@ L.Playback.SliderControl = L.Control.extend({
         return this._container;
     }
 });      
+L.Playback = L.Playback || {};
+
+L.Playback.DataStream = L.Class.extend({
+    //!!! ENTIRE CLASS MOCKED !!! WILL NOT WORK PROBABLY !!!
+
+    // what should this do?... Should it be here?
+    // Let write it without buffer for now. Everything that contains a certain 
+    //timestamp should be know to the lower program.
+    
+    // Should have somekind of header information. An array with the start and 
+    // end time of every voyage. 
+
+    getDataLight : function() {
+        // this contruct an lightweight array without the actual data, 
+        // only voyID, start and end time. It should derive this from the arraykeys
+        return dataRange;
+    },
+
+    getDataFull : function(trackID, addData) {
+        // some firebase or socket code, for now window with 
+        // mocking asynchronicity (for latency) with timeout
+        var asyncMock = function (trackID){
+            var track = window.allTracks[trackID];
+            addData(track, this.getTime());
+        };
+
+        window.setTimeout(asyncMock, 10, trackID, addtrack);
+
+        return track;
+    },
+
+    appropriateTracks : function(dataLight, previousData, timestamp){
+        // Check dataLight for suitable tracks
+        var appropriateTracks = dataRange.map(function(index, track){
+            if (    timestamp > track.startTime 
+                &&  timestamp < track.endTime) {
+                return track;
+            }
+        });
+        return appropriateTracks;
+    },
+
+    addKeepOrRemoveTracks : function(appropriateTracks){
+
+        var toBeAddedTracks = [];
+
+        if (appropriateTracks.length == 0) {
+            // this.clearData();
+            return;
+        } else {
+            toBeAddedTracks = appropriateTracks.map(
+                function(track, index){
+                    // Check if track is already available,
+                    // If not return the it to be queued for adding
+                    if (!this._trackController.isTrack(track.id)){
+                        return track;
+                    } 
+                }
+            )
+        }
+
+        // Still needs conditional for removal of tracks! Although that might not
+        // be need at all. Only if memory gets overloaded, but I suppose that 
+        // should take a while. Bandwidth and response time worry me more.
+
+        toBeAddedTracks.map(function(track, index){
+            // get full data, and use vendor addData to add it to the tracks
+            var fullTrack = getFullData(track.trackID, this.addData);
+
+            // from playback
+            this._trackController.addTrack(new L.Playback.Track(fullTrack, this.options), ms);
+        })
+    }
+});
 
 L.Playback = L.Playback.Clock.extend({
 
@@ -713,7 +786,7 @@ L.Playback = L.Playback.Clock.extend({
             SliderControl : L.Playback.SliderControl
         },
 
-        //? Also a conveniance method from leaflet. Makes merging options a little bit easier as can be seen in the initialise below. L.setOptions() uses these defaults and merges them with the arguments it is given
+        //? Also a convenience method from leaflet. Makes merging options a little bit easier as can be seen in the initialise below. L.setOptions() uses these defaults and merges them with the arguments it is given
 
         options : {
             tickLen: 250,
@@ -831,6 +904,12 @@ L.Playback = L.Playback.Clock.extend({
             if (this.options.tracksLayer) {
                 this._tracksLayer.addLayer(geoJSON);
             }                  
+        },
+
+        addDataStream: function(){
+            //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+            this.dataStream = new L.Playback.DataStream(this);
+
         },
 
         destroy: function() {

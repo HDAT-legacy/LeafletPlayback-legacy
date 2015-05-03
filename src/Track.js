@@ -115,29 +115,6 @@ L.Playback.Track = L.Class.extend({
     getEndTime : function () {
         return this._endTime;
     },
-
-    getTickMultiPoint : function () {
-        var t = this.getStartTime();
-        var endT = this.getEndTime();
-        var coordinates = [];
-        var time = [];
-        while (t <= endT) {
-            time.push(t);
-            coordinates.push(this.tick(t));
-            t += this._tickLen;
-        }
-
-        return {
-            type : 'Feature',
-            geometry : {
-                type : 'MultiPoint',
-                coordinates : coordinates
-            },
-            properties : {
-                time : time
-            }
-        };
-    },
     
     tick : function (timestamp) {
         if (timestamp > this._endTime)

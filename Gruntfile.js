@@ -13,6 +13,7 @@ module.exports = function(grunt) {
           'src/Clock.js',
           'src/TracksLayer.js',
           'src/Control.js',
+          'src/DataStream.js',
           'src/Playback.js',
           'src/epilogue.js'
         ],

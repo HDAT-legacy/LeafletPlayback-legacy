@@ -31,36 +31,44 @@ L.Playback.DataStream = L.Class.extend({
 
     appropriateTracks : function(dataLight, previousData, timestamp){
         // Check dataLight for suitable tracks
-        var currentDataRange = dataRange.map(function(index, track){
+        var appropriateTracks = dataRange.map(function(index, track){
             if (    timestamp > track.startTime 
                 &&  timestamp < track.endTime) {
                 return track;
             }
         });
+        return appropriateTracks;
     },
 
-    addKeepOrRemoveTracks : function(appropriateTracksRange, _tracks){
+    addKeepOrRemoveTracks : function(appropriateTracks){
 
-        this.toBeAddedTracks = [];
+        var toBeAddedTracks = [];
 
         if (appropriateTracks.length == 0) {
-            this.clearData();
+            // this.clearData();
             return;
         } else {
-            this.toBeAddedTrack = appropriateTracks.map(
+            toBeAddedTracks = appropriateTracks.map(
                 function(track, index){
                     // Check if track is already available,
                     // If not return the it to be queued for adding
                     if (!this._trackController.isTrack(track.id)){
                         return track;
-                    }
+                    } 
                 }
             )
         }
 
+        // Still needs conditional for removal of tracks! Although that might not
+        // be need at all. Only if memory gets overloaded, but I suppose that 
+        // should take a while. Bandwidth and response time worry me more.
+
         toBeAddedTracks.map(function(track, index){
             // get full data, and use vendor addData to add it to the tracks
-            getFullData(track.trackID, this.addData);
+            var fullTrack = getFullData(track.trackID, this.addData);
+
+            // from playback
+            this._trackController.addTrack(new L.Playback.Track(fullTrack, this.options), ms);
         })
     }
 });
