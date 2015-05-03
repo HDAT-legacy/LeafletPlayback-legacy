@@ -129,9 +129,11 @@ L.Playback.Track = L.Class.extend({
         
         // if time stamp is not set, then get first tick
         if (timestamp) {
+            console.log('add with timestamp', timestamp);
             lngLat = this.tick(timestamp);
         }
         else {
+            console.log('add without timestamp');
             lngLat = this.getFirstTick();
         }        
     

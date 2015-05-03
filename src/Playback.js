@@ -103,6 +103,8 @@ L.Playback = L.Playback.Clock.extend({
             
             //??? Missing its opposite, removeData. But perhaps that's not needed. We need to determine somekind of dataflow architecture.
 
+            console.log('setData calling to get the time:', this.getTime());
+
             this.addData(geoJSON, this.getTime());
 
             //? Set the (time) cursor to the start of the show.
@@ -113,6 +115,8 @@ L.Playback = L.Playback.Clock.extend({
 
         // bad implementation
         addData : function (geoJSON, ms) {
+            console.log('addData with timestamp?', ms)
+
             // return if data not set
             if (!geoJSON) {
                 return;
@@ -139,7 +143,6 @@ L.Playback = L.Playback.Clock.extend({
         addDataStream: function(){
             //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
             this.dataStream = new L.Playback.DataStream(this);
-
         },
 
         destroy: function() {

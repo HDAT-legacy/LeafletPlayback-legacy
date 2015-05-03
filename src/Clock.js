@@ -78,6 +78,7 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getTime: function() {
+    console.log('clock gives the time:', this._cursor )
     return this._cursor;
   },
 

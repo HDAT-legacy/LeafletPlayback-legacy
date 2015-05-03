@@ -277,9 +277,11 @@ L.Playback.Track = L.Class.extend({
         
         // if time stamp is not set, then get first tick
         if (timestamp) {
+            console.log('add with timestamp', timestamp);
             lngLat = this.tick(timestamp);
         }
         else {
+            console.log('add without timestamp');
             lngLat = this.getFirstTick();
         }        
     
@@ -334,6 +336,7 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
+        console.log('Trackcontroller is timestamp?', timestamp);
         var marker = track.setMarker(timestamp, this.options);
 
         if (marker) {
@@ -489,6 +492,7 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getTime: function() {
+    console.log('clock gives the time:', this._cursor )
     return this._cursor;
   },
 
@@ -873,6 +877,8 @@ L.Playback = L.Playback.Clock.extend({
             
             //??? Missing its opposite, removeData. But perhaps that's not needed. We need to determine somekind of dataflow architecture.
 
+            console.log('setData calling to get the time:', this.getTime());
+
             this.addData(geoJSON, this.getTime());
 
             //? Set the (time) cursor to the start of the show.
@@ -883,6 +889,8 @@ L.Playback = L.Playback.Clock.extend({
 
         // bad implementation
         addData : function (geoJSON, ms) {
+            console.log('addData with timestamp?', ms)
+
             // return if data not set
             if (!geoJSON) {
                 return;
@@ -909,7 +917,6 @@ L.Playback = L.Playback.Clock.extend({
         addDataStream: function(){
             //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
             this.dataStream = new L.Playback.DataStream(this);
-
         },
 
         destroy: function() {

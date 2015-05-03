@@ -30,6 +30,7 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
+        console.log('Trackcontroller is timestamp?', timestamp);
         var marker = track.setMarker(timestamp, this.options);
 
         if (marker) {
