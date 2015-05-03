@@ -3,13 +3,6 @@ L.Playback = L.Playback || {};
 L.Playback.DataStream = L.Class.extend({
     //!!! ENTIRE CLASS MOCKED !!! WILL NOT WORK PROBABLY !!!
 
-    // what should this do?... Should it be here?
-    // Let write it without buffer for now. Everything that contains a certain 
-    //timestamp should be know to the lower program.
-    
-    // Should have somekind of header information. An array with the start and 
-    // end time of every voyage. 
-
     getDataLight : function() {
         // this contruct an lightweight array without the actual data, 
         // only voyID, start and end time. It should derive this from the arraykeys
@@ -44,22 +37,17 @@ L.Playback.DataStream = L.Class.extend({
 
         var toBeAddedTracks = [];
 
-        if (appropriateTracks.length == 0) {
-            // this.clearData();
-            return;
-        } else {
-            toBeAddedTracks = appropriateTracks.map(
-                function(track, index){
-                    // Check if track is already available,
-                    // If not return the it to be queued for adding
-                    if (!this._trackController.isTrack(track.id)){
-                        return track;
-                    } 
-                }
-            )
+        if (appropriateTracks.length != 0) {
+            toBeAddedTracks = appropriateTracks.map(function(track, index){
+                // Check if track is already available,
+                // If not return the it to be queued for adding
+                if (!this._trackController.isTrack(track.id)){
+                    return track;
+                } 
+            })
         }
 
-        // Still needs conditional for removal of tracks! Although that might not
+        // Still needs something for removal of tracks! Although that might not
         // be need at all. Only if memory gets overloaded, but I suppose that 
         // should take a while. Bandwidth and response time worry me more.
 

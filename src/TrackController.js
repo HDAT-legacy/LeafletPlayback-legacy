@@ -11,7 +11,7 @@ L.Playback.TrackController = L.Class.extend({
     },
     
     clearTracks: function(){
-        //? called by setData, does what is expected of it. And by setTracks it seems. Wonder what that's all about.
+        // called by setData, does what is expected of it.
         while (this._tracks.length > 0) {
             var track = this._tracks.pop();
             var marker = track.getMarker();
@@ -25,7 +25,7 @@ L.Playback.TrackController = L.Class.extend({
     // add single track
     addTrack : function (track, timestamp) {
         // return if nothing is set
-        //? Important method.
+        // Important method.
         if (!track) {
             return;
         }
@@ -63,6 +63,12 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     tock : function (timestamp, transitionTime) {
+        // For each track determine new position and move the markers.
+        // This function is a central cog in the playback wheel
+
+        // Reponse to the clock's ticks. It checks all the possible ticks for 
+        // a givens track, selects the right one, and moves the marker.
+
         for (var i = 0, len = this._tracks.length; i < len; i++) {
             var lngLat = this._tracks[i].tick(timestamp);
             var latLng = new L.LatLng(lngLat[1], lngLat[0]);
@@ -71,6 +77,8 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     getStartTime : function () {
+        // Oke as it is. To trackscontrol there is no time outside the tracks.
+
         var earliestTime = 0;
 
         if (this._tracks.length > 0) {
@@ -87,6 +95,8 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     getEndTime : function () {
+        // idem as start
+
         var latestTime = 0;
     
         if (this._tracks.length > 0){

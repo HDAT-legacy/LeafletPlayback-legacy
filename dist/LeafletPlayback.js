@@ -130,17 +130,24 @@ L.Playback.MoveableMarker = L.Marker.extend({
         }    
     },
 
-    toggleMarker: function () {
+    toggleMarker: function (showOrHide) {
+        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+        // defaults to show
+        var opacity = 1;
+        if (showOrHide == 'hide'){
+            opacity = 0;
+        }
+
         // Some styling to hide and show marker. Basicly just inverting the opacity. 
         // Needs check wether OPACITY exists on dom util
         if (L.DomUtil.OPACITY) {
             if (this._icon) { 
-                this._icon.style[L.DomUtil.OPACITY] =  !this._icon.style[L.DomUtil.OPACITY]; 
+                this._icon.style[L.DomUtil.OPACITY] =  opacity; 
                 if (this._popup && this._popup._wrapper)
-                    this._popup._wrapper.style[L.DomUtil.OPACITY] = !this._popup._wrapper.style[L.DomUtil.OPACITY]; 
+                    this._popup._wrapper.style[L.DomUtil.OPACITY] = opacity; 
             }
             if (this._shadow) { 
-                this._shadow.style[L.DomUtil.OPACITY] = !this._shadow.style[L.DomUtil.OPACITY] ; 
+                this._shadow.style[L.DomUtil.OPACITY] = opacity ; 
             }
         }
     }
@@ -265,10 +272,19 @@ L.Playback.Track = L.Class.extend({
     },
     
     tick : function (timestamp) {
-        if (timestamp > this._endTime)
+        // This is interesting. It outside of timebound it set the track to the
+        // last or first tick. We dont want that. Or we do, but we want it to 
+        // toggle the marker here.
+
+        if (timestamp > this._endTime){
             timestamp = this._endTime;
-        if (timestamp < this._startTime)
+            // this._marker.toggleMarker('hide');
+        } else if (timestamp < this._startTime){
             timestamp = this._startTime;
+            // this._marker.toggleMarker('hide');
+        } else {
+            // this._marker.toggleMarker('show');
+        }
         return this._ticks[timestamp];
     },
     
@@ -317,7 +333,7 @@ L.Playback.TrackController = L.Class.extend({
     },
     
     clearTracks: function(){
-        //? called by setData, does what is expected of it. And by setTracks it seems. Wonder what that's all about.
+        // called by setData, does what is expected of it.
         while (this._tracks.length > 0) {
             var track = this._tracks.pop();
             var marker = track.getMarker();
@@ -331,7 +347,7 @@ L.Playback.TrackController = L.Class.extend({
     // add single track
     addTrack : function (track, timestamp) {
         // return if nothing is set
-        //? Important method.
+        // Important method.
         if (!track) {
             return;
         }
@@ -369,6 +385,12 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     tock : function (timestamp, transitionTime) {
+        // For each track determine new position and move the markers.
+        // This function is a central cog in the playback wheel
+
+        // Reponse to the clock's ticks. It checks all the possible ticks for 
+        // a givens track, selects the right one, and moves the marker.
+
         for (var i = 0, len = this._tracks.length; i < len; i++) {
             var lngLat = this._tracks[i].tick(timestamp);
             var latLng = new L.LatLng(lngLat[1], lngLat[0]);
@@ -377,6 +399,8 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     getStartTime : function () {
+        // Oke as it is. To trackscontrol there is no time outside the tracks.
+
         var earliestTime = 0;
 
         if (this._tracks.length > 0) {
@@ -393,6 +417,8 @@ L.Playback.TrackController = L.Class.extend({
     },
 
     getEndTime : function () {
+        // idem as start
+
         var latestTime = 0;
     
         if (this._tracks.length > 0){
@@ -428,6 +454,9 @@ L.Playback.Clock = L.Class.extend({
   },
 
   _tick: function (self) {
+    // This is the callback for the interval. What should happen if the clock
+    // ticks? The tick generates tock as a response. Which is on the trackControl.
+
     if (self._cursor > self._trackController.getEndTime()) {
       clearInterval(self._intervalID);
       return;
@@ -449,6 +478,7 @@ L.Playback.Clock = L.Class.extend({
   },
 
   start: function () {
+    // ENGINE. setInverval powers the whole code to continually run. 
     if (this._intervalID) return;
     this._intervalID = window.setInterval(
       this._tick, 
@@ -480,6 +510,8 @@ L.Playback.Clock = L.Class.extend({
   },
 
   setCursor: function (ms) {
+    // Called by outside, ie. the controls. They can influence the code trough this.
+
     var time = parseInt(ms);
     if (!time) return;
     var mod = time % this._tickLen;
@@ -497,8 +529,12 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getStartTime: function() {
-    //!!! This is going wrong. A condional needs to be added that checks the options on a start and end time, and if those are not present, default to what the track thinks is the start and end time. 
-    //!!! really toroughly test changes to this function. It's important.
+    // This should contain a simple conditional to check the options a given
+    // start. If so that should be the start time, wether or not the rest of the
+    // code agrees with it. The clock is lord and master, tracksControl and tracks
+    // just have to submit to father time. 
+
+    // Also trackcontrol 
 
     return this._trackController.getStartTime();
   },
@@ -703,13 +739,6 @@ L.Playback = L.Playback || {};
 L.Playback.DataStream = L.Class.extend({
     //!!! ENTIRE CLASS MOCKED !!! WILL NOT WORK PROBABLY !!!
 
-    // what should this do?... Should it be here?
-    // Let write it without buffer for now. Everything that contains a certain 
-    //timestamp should be know to the lower program.
-    
-    // Should have somekind of header information. An array with the start and 
-    // end time of every voyage. 
-
     getDataLight : function() {
         // this contruct an lightweight array without the actual data, 
         // only voyID, start and end time. It should derive this from the arraykeys
@@ -744,22 +773,17 @@ L.Playback.DataStream = L.Class.extend({
 
         var toBeAddedTracks = [];
 
-        if (appropriateTracks.length == 0) {
-            // this.clearData();
-            return;
-        } else {
-            toBeAddedTracks = appropriateTracks.map(
-                function(track, index){
-                    // Check if track is already available,
-                    // If not return the it to be queued for adding
-                    if (!this._trackController.isTrack(track.id)){
-                        return track;
-                    } 
-                }
-            )
+        if (appropriateTracks.length != 0) {
+            toBeAddedTracks = appropriateTracks.map(function(track, index){
+                // Check if track is already available,
+                // If not return the it to be queued for adding
+                if (!this._trackController.isTrack(track.id)){
+                    return track;
+                } 
+            })
         }
 
-        // Still needs conditional for removal of tracks! Although that might not
+        // Still needs something for removal of tracks! Although that might not
         // be need at all. Only if memory gets overloaded, but I suppose that 
         // should take a while. Bandwidth and response time worry me more.
 

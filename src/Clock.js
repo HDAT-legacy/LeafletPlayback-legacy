@@ -14,6 +14,9 @@ L.Playback.Clock = L.Class.extend({
   },
 
   _tick: function (self) {
+    // This is the callback for the interval. What should happen if the clock
+    // ticks? The tick generates tock as a response. Which is on the trackControl.
+
     if (self._cursor > self._trackController.getEndTime()) {
       clearInterval(self._intervalID);
       return;
@@ -35,6 +38,7 @@ L.Playback.Clock = L.Class.extend({
   },
 
   start: function () {
+    // ENGINE. setInverval powers the whole code to continually run. 
     if (this._intervalID) return;
     this._intervalID = window.setInterval(
       this._tick, 
@@ -66,6 +70,8 @@ L.Playback.Clock = L.Class.extend({
   },
 
   setCursor: function (ms) {
+    // Called by outside, ie. the controls. They can influence the code trough this.
+
     var time = parseInt(ms);
     if (!time) return;
     var mod = time % this._tickLen;
@@ -83,8 +89,12 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getStartTime: function() {
-    //!!! This is going wrong. A condional needs to be added that checks the options on a start and end time, and if those are not present, default to what the track thinks is the start and end time. 
-    //!!! really toroughly test changes to this function. It's important.
+    // This should contain a simple conditional to check the options a given
+    // start. If so that should be the start time, wether or not the rest of the
+    // code agrees with it. The clock is lord and master, tracksControl and tracks
+    // just have to submit to father time. 
+
+    // Also trackcontrol 
 
     return this._trackController.getStartTime();
   },
