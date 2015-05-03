@@ -6,6 +6,13 @@ L.Playback.DataStream = L.Class.extend({
     getDataLight : function() {
         // this contruct an lightweight array without the actual data, 
         // only voyID, start and end time. It should derive this from the arraykeys
+
+        // We could do this with two methods: 
+        // One is by creating a indexed view beforehand.
+        // The other is by constucting a indexed view on the fly.
+        // Both have their advantages and disadvantages. It all depends on how
+        // firebase really is when dealing with large ammounts of data.
+
         return dataRange;
     },
 
@@ -24,7 +31,7 @@ L.Playback.DataStream = L.Class.extend({
 
     appropriateTracks : function(dataLight, previousData, timestamp){
         // Check dataLight for suitable tracks
-        var appropriateTracks = dataRange.map(function(index, track){
+        var appropriateTracks = dataRange.map(function(track, index){
             if (    timestamp > track.startTime 
                 &&  timestamp < track.endTime) {
                 return track;

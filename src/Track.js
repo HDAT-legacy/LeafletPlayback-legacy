@@ -117,18 +117,18 @@ L.Playback.Track = L.Class.extend({
     },
     
     tick : function (timestamp) {
-        // This is interesting. It outside of timebound it set the track to the
+        // This is interesting. If outside of timebound it sets the track to the
         // last or first tick. We dont want that. Or we do, but we want it to 
         // toggle the marker here.
 
         if (timestamp > this._endTime){
             timestamp = this._endTime;
-            // this._marker.toggleMarker('hide');
+            this._marker.toggleMarker('hide');
         } else if (timestamp < this._startTime){
             timestamp = this._startTime;
-            // this._marker.toggleMarker('hide');
+            this._marker.toggleMarker('hide');
         } else {
-            // this._marker.toggleMarker('show');
+            this._marker.toggleMarker('show');
         }
         return this._ticks[timestamp];
     },
@@ -138,11 +138,9 @@ L.Playback.Track = L.Class.extend({
         
         // if time stamp is not set, then get first tick
         if (timestamp) {
-            console.log('add with timestamp', timestamp);
             lngLat = this.tick(timestamp);
         }
         else {
-            console.log('add without timestamp');
             lngLat = this.getFirstTick();
         }        
     

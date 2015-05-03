@@ -22,16 +22,17 @@ L.Playback.TrackController = L.Class.extend({
         }            
     },
     
-    // add single track
     addTrack : function (track, timestamp) {
         // return if nothing is set
-        // Important method.
         if (!track) {
             return;
         }
 
-        console.log('Trackcontroller is timestamp?', timestamp);
+        console.log(track);
+
         var marker = track.setMarker(timestamp, this.options);
+
+        console.log(marker);
 
         if (marker) {
             marker.addTo(this._map);
@@ -42,6 +43,10 @@ L.Playback.TrackController = L.Class.extend({
 
     removeTrack : function(trackID){
         //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+
+        // Not neccecairy right now, will need to be written in the future I
+        // suspect.
+
         var trackID = trackID;
 
         this._tracks.map(function(track, index){

@@ -272,18 +272,18 @@ L.Playback.Track = L.Class.extend({
     },
     
     tick : function (timestamp) {
-        // This is interesting. It outside of timebound it set the track to the
+        // This is interesting. If outside of timebound it sets the track to the
         // last or first tick. We dont want that. Or we do, but we want it to 
         // toggle the marker here.
 
         if (timestamp > this._endTime){
             timestamp = this._endTime;
-            // this._marker.toggleMarker('hide');
+            this._marker.toggleMarker('hide');
         } else if (timestamp < this._startTime){
             timestamp = this._startTime;
-            // this._marker.toggleMarker('hide');
+            this._marker.toggleMarker('hide');
         } else {
-            // this._marker.toggleMarker('show');
+            this._marker.toggleMarker('show');
         }
         return this._ticks[timestamp];
     },
@@ -293,11 +293,9 @@ L.Playback.Track = L.Class.extend({
         
         // if time stamp is not set, then get first tick
         if (timestamp) {
-            console.log('add with timestamp', timestamp);
             lngLat = this.tick(timestamp);
         }
         else {
-            console.log('add without timestamp');
             lngLat = this.getFirstTick();
         }        
     
@@ -344,16 +342,17 @@ L.Playback.TrackController = L.Class.extend({
         }            
     },
     
-    // add single track
     addTrack : function (track, timestamp) {
         // return if nothing is set
-        // Important method.
         if (!track) {
             return;
         }
 
-        console.log('Trackcontroller is timestamp?', timestamp);
+        console.log(track);
+
         var marker = track.setMarker(timestamp, this.options);
+
+        console.log(marker);
 
         if (marker) {
             marker.addTo(this._map);
@@ -364,6 +363,10 @@ L.Playback.TrackController = L.Class.extend({
 
     removeTrack : function(trackID){
         //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
+
+        // Not neccecairy right now, will need to be written in the future I
+        // suspect.
+
         var trackID = trackID;
 
         this._tracks.map(function(track, index){
@@ -524,7 +527,6 @@ L.Playback.Clock = L.Class.extend({
   },
 
   getTime: function() {
-    console.log('clock gives the time:', this._cursor )
     return this._cursor;
   },
 
@@ -742,6 +744,13 @@ L.Playback.DataStream = L.Class.extend({
     getDataLight : function() {
         // this contruct an lightweight array without the actual data, 
         // only voyID, start and end time. It should derive this from the arraykeys
+
+        // We could do this with two methods: 
+        // One is by creating a indexed view beforehand.
+        // The other is by constucting a indexed view on the fly.
+        // Both have their advantages and disadvantages. It all depends on how
+        // firebase really is when dealing with large ammounts of data.
+
         return dataRange;
     },
 
@@ -760,7 +769,7 @@ L.Playback.DataStream = L.Class.extend({
 
     appropriateTracks : function(dataLight, previousData, timestamp){
         // Check dataLight for suitable tracks
-        var appropriateTracks = dataRange.map(function(index, track){
+        var appropriateTracks = dataRange.map(function(track, index){
             if (    timestamp > track.startTime 
                 &&  timestamp < track.endTime) {
                 return track;
@@ -901,7 +910,6 @@ L.Playback = L.Playback.Clock.extend({
             
             //??? Missing its opposite, removeData. But perhaps that's not needed. We need to determine somekind of dataflow architecture.
 
-            console.log('setData calling to get the time:', this.getTime());
 
             this.addData(geoJSON, this.getTime());
 
@@ -913,7 +921,6 @@ L.Playback = L.Playback.Clock.extend({
 
         // bad implementation
         addData : function (geoJSON, ms) {
-            console.log('addData with timestamp?', ms)
 
             // return if data not set
             if (!geoJSON) {
