@@ -344,6 +344,11 @@ L.Playback.TrackController = L.Class.extend({
     
     addTrack : function (track, timestamp) {
         // return if nothing is set
+
+        // FIRST REAL EDIT SHOULD BE HERE. 
+        // point where marker is added should change. it should not be here.
+        // As far as I see now, the track is no problem. 
+
         if (!track) {
             return;
         }

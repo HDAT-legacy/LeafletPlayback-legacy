@@ -121,14 +121,13 @@ L.Playback.Track = L.Class.extend({
         // last or first tick. We dont want that. Or we do, but we want it to 
         // toggle the marker here.
 
+        // marker.addTo(this._map);    
+
         if (timestamp > this._endTime){
             timestamp = this._endTime;
-            this._marker.toggleMarker('hide');
         } else if (timestamp < this._startTime){
             timestamp = this._startTime;
-            this._marker.toggleMarker('hide');
         } else {
-            this._marker.toggleMarker('show');
         }
         return this._ticks[timestamp];
     },

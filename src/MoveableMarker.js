@@ -43,27 +43,5 @@ L.Playback.MoveableMarker = L.Marker.extend({
         if (this._popup) {
             this._popup.setContent(this.getPopupContent() + this._latlng.toString());
         }    
-    },
-
-    toggleMarker: function (showOrHide) {
-        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
-        // defaults to show
-        var opacity = 1;
-        if (showOrHide == 'hide'){
-            opacity = 0;
-        }
-
-        // Some styling to hide and show marker. Basicly just inverting the opacity. 
-        // Needs check wether OPACITY exists on dom util
-        if (L.DomUtil.OPACITY) {
-            if (this._icon) { 
-                this._icon.style[L.DomUtil.OPACITY] =  opacity; 
-                if (this._popup && this._popup._wrapper)
-                    this._popup._wrapper.style[L.DomUtil.OPACITY] = opacity; 
-            }
-            if (this._shadow) { 
-                this._shadow.style[L.DomUtil.OPACITY] = opacity ; 
-            }
-        }
     }
 });
