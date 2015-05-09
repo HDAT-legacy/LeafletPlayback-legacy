@@ -6,7 +6,7 @@ L.Playback.TrackController = L.Class.extend({
         this.options = options || {};
     
         this._map = map;
-
+        
         this._tracks = [];
     },
     
@@ -33,14 +33,10 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
-        console.log(track);
-
         var marker = track.setMarker(timestamp, this.options);
 
-        console.log(marker);
-
         if (marker) {
-            marker.addTo(this._map);
+            // marker.addTo(this._map);
             
             this._tracks.push(track);
         }

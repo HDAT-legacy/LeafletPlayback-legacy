@@ -128,35 +128,13 @@ L.Playback.MoveableMarker = L.Marker.extend({
         if (this._popup) {
             this._popup.setContent(this.getPopupContent() + this._latlng.toString());
         }    
-    },
-
-    toggleMarker: function (showOrHide) {
-        //!!! FUNCTION MOCKED !!! WILL NOT WORK PROBABLY !!!
-        // defaults to show
-        var opacity = 1;
-        if (showOrHide == 'hide'){
-            opacity = 0;
-        }
-
-        // Some styling to hide and show marker. Basicly just inverting the opacity. 
-        // Needs check wether OPACITY exists on dom util
-        if (L.DomUtil.OPACITY) {
-            if (this._icon) { 
-                this._icon.style[L.DomUtil.OPACITY] =  opacity; 
-                if (this._popup && this._popup._wrapper)
-                    this._popup._wrapper.style[L.DomUtil.OPACITY] = opacity; 
-            }
-            if (this._shadow) { 
-                this._shadow.style[L.DomUtil.OPACITY] = opacity ; 
-            }
-        }
     }
 });
 
 L.Playback = L.Playback || {};
 
 L.Playback.Track = L.Class.extend({
-    initialize : function (geoJSON, options) {
+    initialize : function (map, geoJSON, options) {
         options = options || {};
         var tickLen = options.tickLen || 250;
         
@@ -164,6 +142,7 @@ L.Playback.Track = L.Class.extend({
         this._tickLen = tickLen;
         this._ticks = [];
         this._marker = null;
+        this._map = map;
 
         var sampleTimes = geoJSON.properties.time;
         var samples = geoJSON.geometry.coordinates;
@@ -278,13 +257,14 @@ L.Playback.Track = L.Class.extend({
 
         if (timestamp > this._endTime){
             timestamp = this._endTime;
-            this._marker.toggleMarker('hide');
+            this._map.removeLayer(this._marker);
         } else if (timestamp < this._startTime){
             timestamp = this._startTime;
-            this._marker.toggleMarker('hide');
+            this._map.removeLayer(this._marker);
         } else {
-            this._marker.toggleMarker('show');
+            this._marker.addTo(this._map);   
         }
+
         return this._ticks[timestamp];
     },
     
@@ -326,7 +306,7 @@ L.Playback.TrackController = L.Class.extend({
         this.options = options || {};
     
         this._map = map;
-
+        
         this._tracks = [];
     },
     
@@ -353,14 +333,10 @@ L.Playback.TrackController = L.Class.extend({
             return;
         }
 
-        console.log(track);
-
         var marker = track.setMarker(timestamp, this.options);
 
-        console.log(marker);
-
         if (marker) {
-            marker.addTo(this._map);
+            // marker.addTo(this._map);
             
             this._tracks.push(track);
         }
@@ -446,7 +422,7 @@ L.Playback.TrackController = L.Class.extend({
         return this._tracks;
     }
 });
-L.Playback = L.Playback || {};
+ L.Playback = L.Playback || {};
 
 L.Playback.Clock = L.Class.extend({
 
@@ -873,7 +849,7 @@ L.Playback = L.Playback.Clock.extend({
             }
 
             //? Bit more interesting function. I think this starts up the entire machine.
-            this.setData(geoJSON);            
+            this.setData(map, geoJSON);            
             
 
             if (this.options.playControl) {
@@ -903,7 +879,7 @@ L.Playback = L.Playback.Clock.extend({
             }
         },
         
-        setData : function (geoJSON) {
+        setData : function (map, geoJSON) {
 
             //? Called by initialize. It's weird. It removes everything first, while everything should be empty on load. But who knows their evil motives.   
 
@@ -916,7 +892,7 @@ L.Playback = L.Playback.Clock.extend({
             //??? Missing its opposite, removeData. But perhaps that's not needed. We need to determine somekind of dataflow architecture.
 
 
-            this.addData(geoJSON, this.getTime());
+            this.addData(map, geoJSON, this.getTime());
 
             //? Set the (time) cursor to the start of the show.
             //!!! getStarttime needs editting.
@@ -925,7 +901,7 @@ L.Playback = L.Playback.Clock.extend({
         },
 
         // bad implementation
-        addData : function (geoJSON, ms) {
+        addData : function (map, geoJSON, ms) {
 
             // return if data not set
             if (!geoJSON) {
@@ -935,14 +911,14 @@ L.Playback = L.Playback.Clock.extend({
             //? Loops over the GeoJSON and adds each single track in it. Don't really know (yet) why time is trown into addTrack() too.
             if (geoJSON instanceof Array) {
                 for (var i = 0, len = geoJSON.length; i < len; i++) {
-                    this._trackController.addTrack(new L.Playback.Track(geoJSON[i], this.options), ms);
+                    this._trackController.addTrack(new L.Playback.Track(map, geoJSON[i], this.options), ms);
                 }
             } else {
-                this._trackController.addTrack(new L.Playback.Track(geoJSON, this.options), ms);
+                this._trackController.addTrack(new L.Playback.Track(map, geoJSON, this.options), ms);
             }
 
             //? This fire's a custom event of somekind, seems important but has no connection to the internal working of the code.
-            this._map.fire('playback:set:data');
+            // this._map.fire('playback:set:data');
             
             //? Trivial - tracksLayer is disconnected from the main functionality.
             if (this.options.tracksLayer) {

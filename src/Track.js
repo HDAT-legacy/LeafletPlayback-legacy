@@ -1,7 +1,7 @@
 L.Playback = L.Playback || {};
 
 L.Playback.Track = L.Class.extend({
-    initialize : function (geoJSON, options) {
+    initialize : function (map, geoJSON, options) {
         options = options || {};
         var tickLen = options.tickLen || 250;
         
@@ -9,6 +9,7 @@ L.Playback.Track = L.Class.extend({
         this._tickLen = tickLen;
         this._ticks = [];
         this._marker = null;
+        this._map = map;
 
         var sampleTimes = geoJSON.properties.time;
         var samples = geoJSON.geometry.coordinates;
@@ -121,14 +122,16 @@ L.Playback.Track = L.Class.extend({
         // last or first tick. We dont want that. Or we do, but we want it to 
         // toggle the marker here.
 
-        // marker.addTo(this._map);    
-
         if (timestamp > this._endTime){
             timestamp = this._endTime;
+            this._map.removeLayer(this._marker);
         } else if (timestamp < this._startTime){
             timestamp = this._startTime;
+            this._map.removeLayer(this._marker);
         } else {
+            this._marker.addTo(this._map);   
         }
+
         return this._ticks[timestamp];
     },
     

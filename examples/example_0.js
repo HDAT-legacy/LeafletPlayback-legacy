@@ -1,6 +1,8 @@
 $(function() {
     // Setup leaflet map
+
     var map = new L.Map('map');
+    // console.log(map);
 
     var basemapLayer = new L.TileLayer('http://{s}.tiles.mapbox.com/v3/github.map-xgq2svrz/{z}/{x}/{y}.png');
 

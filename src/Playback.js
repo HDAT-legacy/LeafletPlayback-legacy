@@ -61,7 +61,7 @@ L.Playback = L.Playback.Clock.extend({
             }
 
             //? Bit more interesting function. I think this starts up the entire machine.
-            this.setData(geoJSON);            
+            this.setData(map, geoJSON);            
             
 
             if (this.options.playControl) {
@@ -91,7 +91,7 @@ L.Playback = L.Playback.Clock.extend({
             }
         },
         
-        setData : function (geoJSON) {
+        setData : function (map, geoJSON) {
 
             //? Called by initialize. It's weird. It removes everything first, while everything should be empty on load. But who knows their evil motives.   
 
@@ -104,7 +104,7 @@ L.Playback = L.Playback.Clock.extend({
             //??? Missing its opposite, removeData. But perhaps that's not needed. We need to determine somekind of dataflow architecture.
 
 
-            this.addData(geoJSON, this.getTime());
+            this.addData(map, geoJSON, this.getTime());
 
             //? Set the (time) cursor to the start of the show.
             //!!! getStarttime needs editting.
@@ -113,7 +113,7 @@ L.Playback = L.Playback.Clock.extend({
         },
 
         // bad implementation
-        addData : function (geoJSON, ms) {
+        addData : function (map, geoJSON, ms) {
 
             // return if data not set
             if (!geoJSON) {
@@ -123,14 +123,14 @@ L.Playback = L.Playback.Clock.extend({
             //? Loops over the GeoJSON and adds each single track in it. Don't really know (yet) why time is trown into addTrack() too.
             if (geoJSON instanceof Array) {
                 for (var i = 0, len = geoJSON.length; i < len; i++) {
-                    this._trackController.addTrack(new L.Playback.Track(geoJSON[i], this.options), ms);
+                    this._trackController.addTrack(new L.Playback.Track(map, geoJSON[i], this.options), ms);
                 }
             } else {
-                this._trackController.addTrack(new L.Playback.Track(geoJSON, this.options), ms);
+                this._trackController.addTrack(new L.Playback.Track(map, geoJSON, this.options), ms);
             }
 
             //? This fire's a custom event of somekind, seems important but has no connection to the internal working of the code.
-            this._map.fire('playback:set:data');
+            // this._map.fire('playback:set:data');
             
             //? Trivial - tracksLayer is disconnected from the main functionality.
             if (this.options.tracksLayer) {
