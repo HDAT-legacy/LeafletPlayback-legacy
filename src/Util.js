@@ -4,11 +4,11 @@ L.Playback.Util = L.Class.extend({
   statics: {
 
     DateStr: function(time) {
-      return new Date(time).toDateString();
+      return new Date((time - 15768000000) * 1000 ).toDateString();
     },
 
     TimeStr: function(time) {
-      var d = new Date(time);
+      var d = new Date((time - 15768000000) * 1000 );
       var h = d.getHours();
       var m = d.getMinutes();
       var s = d.getSeconds();
@@ -23,6 +23,18 @@ L.Playback.Util = L.Class.extend({
       if (m < 10) m = '0' + m;
       if (s < 10) s = '0' + s;
       return h + ':' + m + ':' + s + dec + ' ' + mer;
+    },
+
+    SeasonStr: function(time) {
+      var d = new Date((time - 15768000000) * 1000 );
+      var m = d.getMonth();
+      var y = d.getFullYear();
+      if ((m >= 12) || (m <= 2)) { m = 'Winter'; };
+      if ((m >= 3) && (m <= 5)) { m = 'Spring'; };
+      if ((m >= 6) && (m <= 8)) { m = 'Summer'; };
+      if ((m >= 9) && (m <= 11)) { m = 'Autumn'; }; /* Nog even checken */
+      // console.log(m + ' ' + y);
+      return m + ' ' + y;
     },
 
     ParseGPX: function(gpx) {
