@@ -17,21 +17,12 @@ L.Playback.DataStream = L.Class.extend({
     },
 
     getDataFull : function(trackID, addData) {
-        // some firebase or socket code, for now window with 
-        // mocking asynchronicity (for latency) with timeout
-        var asyncMock = function (trackID){
-            var track = window.allTracks[trackID];
-            addData(track, this.getTime());
-        };
-
-        window.setTimeout(asyncMock, 10, trackID, addtrack);
-
         return track;
     },
 
-    appropriateTracks : function(dataLight, previousData, timestamp){
+    appropriateTracks : function(dataLight, previousData, cursor){
         // Check dataLight for suitable tracks
-        var appropriateTracks = dataRange.map(function(track, index){
+        var appropriateTracks = dataLight.map(function(track, index){
             if (    timestamp > track.startTime 
                 &&  timestamp < track.endTime) {
                 return track;
