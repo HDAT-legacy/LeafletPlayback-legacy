@@ -3,6 +3,7 @@ L.Playback = L.Playback || {};
 L.Playback.MoveableMarker = L.Marker.extend({    
     initialize: function (startLatLng, options, feature) {    
         var marker_options = options.marker || {};
+        this._feature =  feature;
 
         if (jQuery.isFunction(marker_options)){        
             marker_options = marker_options(feature);
@@ -11,12 +12,14 @@ L.Playback.MoveableMarker = L.Marker.extend({
         L.Marker.prototype.initialize.call(this, startLatLng, marker_options);
         
         this.popupContent = '';
+        this.popupContent = feature.voyagedetails.first_ship_name;
 
         if (marker_options.getPopup){
             this.popupContent = marker_options.getPopup(feature);            
         }
         
-        this.bindPopup(this.getPopupContent() + startLatLng.toString());
+        this.bindPopup(this.getPopupContent());
+        // this.bindPopup(this.getPopupContent() + startLatLng.toString());
     },
     
     getPopupContent: function() {
@@ -40,8 +43,9 @@ L.Playback.MoveableMarker = L.Marker.extend({
             }
         }
         this.setLatLng(latLng);
-        if (this._popup) {
-            this._popup.setContent(this.getPopupContent() + this._latlng.toString());
-        }    
+        // if (this._popup) {
+        //     this._popup.setContent(this.getPopupContent() + this._latlng.toString());
+        // }    
     }
 });
+

@@ -22,11 +22,11 @@ L.Playback.Util = L.Class.extend({
   statics: {
 
     DateStr: function(time) {
-      return new Date(time).toDateString();
+      return new Date((time - 15768000000) * 1000 ).toDateString();
     },
 
     TimeStr: function(time) {
-      var d = new Date(time);
+      var d = new Date((time - 15768000000) * 1000 );
       var h = d.getHours();
       var m = d.getMinutes();
       var s = d.getSeconds();
@@ -41,6 +41,18 @@ L.Playback.Util = L.Class.extend({
       if (m < 10) m = '0' + m;
       if (s < 10) s = '0' + s;
       return h + ':' + m + ':' + s + dec + ' ' + mer;
+    },
+
+    SeasonStr: function(time) {
+      var d = new Date((time - 15768000000) * 1000 );
+      var m = d.getMonth();
+      var y = d.getFullYear();
+      if ((m >= 12) || (m <= 2)) { m = 'Winter'; };
+      if ((m >= 3) && (m <= 5)) { m = 'Spring'; };
+      if ((m >= 6) && (m <= 8)) { m = 'Summer'; };
+      if ((m >= 9) && (m <= 11)) { m = 'Autumn'; }; /* Nog even checken */
+      // console.log(m + ' ' + y);
+      return m + ' ' + y;
     },
 
     ParseGPX: function(gpx) {
@@ -88,6 +100,7 @@ L.Playback = L.Playback || {};
 L.Playback.MoveableMarker = L.Marker.extend({    
     initialize: function (startLatLng, options, feature) {    
         var marker_options = options.marker || {};
+        this._feature =  feature;
 
         if (jQuery.isFunction(marker_options)){        
             marker_options = marker_options(feature);
@@ -96,12 +109,14 @@ L.Playback.MoveableMarker = L.Marker.extend({
         L.Marker.prototype.initialize.call(this, startLatLng, marker_options);
         
         this.popupContent = '';
+        this.popupContent = feature.voyagedetails.first_ship_name;
 
         if (marker_options.getPopup){
             this.popupContent = marker_options.getPopup(feature);            
         }
         
-        this.bindPopup(this.getPopupContent() + startLatLng.toString());
+        this.bindPopup(this.getPopupContent());
+        // this.bindPopup(this.getPopupContent() + startLatLng.toString());
     },
     
     getPopupContent: function() {
@@ -125,11 +140,12 @@ L.Playback.MoveableMarker = L.Marker.extend({
             }
         }
         this.setLatLng(latLng);
-        if (this._popup) {
-            this._popup.setContent(this.getPopupContent() + this._latlng.toString());
-        }    
+        // if (this._popup) {
+        //     this._popup.setContent(this.getPopupContent() + this._latlng.toString());
+        // }    
     }
 });
+
 
 L.Playback = L.Playback || {};
 
@@ -581,8 +597,9 @@ L.Playback = L.Playback || {};
 
 L.Playback.DateControl = L.Control.extend({
     options : {
-        position : 'bottomleft',
+        position: 'topleft',
         dateFormatFn: L.Playback.Util.DateStr,
+        seasonFormatFn: L.Playback.Util.SeasonStr,
         timeFormatFn: L.Playback.Util.TimeStr
     },
 
@@ -592,7 +609,7 @@ L.Playback.DateControl = L.Control.extend({
     },
 
     onAdd : function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded');
+        this._container = L.DomUtil.create('div', 'timebar');
 
         var self = this;
         var playback = this.playback;
@@ -601,16 +618,19 @@ L.Playback.DateControl = L.Control.extend({
         var datetime = L.DomUtil.create('div', 'datetimeControl', this._container);
 
         // date time
-        this._date = L.DomUtil.create('p', '', datetime);
-        this._time = L.DomUtil.create('p', '', datetime);
+        this._season = L.DomUtil.create('p', 'season', datetime);
+            // this._date = L.DomUtil.create('p', '', datetime);
+            // this._time = L.DomUtil.create('p', '', datetime);
 
-        this._date.innerHTML = this.options.dateFormatFn(time);
-        this._time.innerHTML = this.options.timeFormatFn(time);
+        this._season.innerHTML = this.options.seasonFormatFn(time);
+            // this._date.innerHTML = this.options.dateFormatFn(time);
+            // this._time.innerHTML = this.options.timeFormatFn(time);
 
         // setup callback
         playback.addCallback(function (ms) {
-            self._date.innerHTML = self.options.dateFormatFn(ms);
-            self._time.innerHTML = self.options.timeFormatFn(ms);
+            self._season.innerHTML = self.options.seasonFormatFn(ms);
+            // self._date.innerHTML = self.options.dateFormatFn(ms);
+            // self._time.innerHTML = self.options.timeFormatFn(ms);
         });
 
         return this._container;
