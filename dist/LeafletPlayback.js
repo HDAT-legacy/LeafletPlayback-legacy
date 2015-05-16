@@ -684,7 +684,7 @@ L.Playback.DateControl = L.Control.extend({
     
 L.Playback.SliderControl = L.Control.extend({
     options : {
-        position : 'bottomright',
+        position : 'bottomleft',
         yearFormatFn: L.Playback.Util.YearStr
     },
 
@@ -866,7 +866,12 @@ L.Playback = L.Playback.Clock.extend({
             }
 
             //? Bit more interesting function. I think this starts up the entire machine.
-            this.setData(map, geoJSON);            
+            this.setData(map, geoJSON);       
+
+            if (this.options.sliderControl) {
+                this.sliderControl = new L.Playback.SliderControl(this);
+                this.sliderControl.addTo(map);
+            }     
             
             if (this.options.dateControl) {
                 this.dateControl = new L.Playback.DateControl(this, options);
@@ -877,13 +882,6 @@ L.Playback = L.Playback.Clock.extend({
                 this.playControl = new L.Playback.PlayControl(this);
                 this.playControl.addTo(map);
             }
-
-            if (this.options.sliderControl) {
-                this.sliderControl = new L.Playback.SliderControl(this);
-                this.sliderControl.addTo(map);
-            }
-
-
         },
         
         clearData : function(){

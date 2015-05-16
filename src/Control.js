@@ -84,7 +84,7 @@ L.Playback.DateControl = L.Control.extend({
     
 L.Playback.SliderControl = L.Control.extend({
     options : {
-        position : 'bottomright',
+        position : 'bottomleft',
         yearFormatFn: L.Playback.Util.YearStr
     },
 
