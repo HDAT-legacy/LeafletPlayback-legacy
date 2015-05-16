@@ -63,6 +63,10 @@ L.Playback = L.Playback.Clock.extend({
             //? Bit more interesting function. I think this starts up the entire machine.
             this.setData(map, geoJSON);            
             
+            if (this.options.dateControl) {
+                this.dateControl = new L.Playback.DateControl(this, options);
+                this.dateControl.addTo(map);
+            }
 
             if (this.options.playControl) {
                 this.playControl = new L.Playback.PlayControl(this);
@@ -74,10 +78,6 @@ L.Playback = L.Playback.Clock.extend({
                 this.sliderControl.addTo(map);
             }
 
-            if (this.options.dateControl) {
-                this.dateControl = new L.Playback.DateControl(this, options);
-                this.dateControl.addTo(map);
-            }
 
         },
         
