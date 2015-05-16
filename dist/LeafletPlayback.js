@@ -106,11 +106,11 @@ L.Playback.MoveableMarker = L.Marker.extend({
     initialize: function (startLatLng, options, feature) {    
         var marker_options = options.marker || {};
         this._feature =  feature;
-
-        if (jQuery.isFunction(marker_options)){        
+        
+        if (jQuery !== undefined){
             marker_options = marker_options(feature);
         }
-        
+
         L.Marker.prototype.initialize.call(this, startLatLng, marker_options);
         
         this.popupContent = '';
@@ -565,10 +565,10 @@ L.Playback.TracksLayer = L.Class.extend({
     initialize : function (map, options) {
         var layer_options = options.layer || {};
         
-        if (jQuery.isFunction(layer_options)){
+        if (jQuery !== undefined) {
             layer_options = layer_options(feature);
         }
-        
+
         if (!layer_options.pointToLayer) {
             layer_options.pointToLayer = function (featureData, latlng) {
                 return new L.CircleMarker(latlng, { radius : 5 });

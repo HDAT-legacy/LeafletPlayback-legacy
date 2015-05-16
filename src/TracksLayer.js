@@ -7,8 +7,10 @@ L.Playback.TracksLayer = L.Class.extend({
     initialize : function (map, options) {
         var layer_options = options.layer || {};
         
-        layer_options = layer_options(feature);
-        
+        if (jQuery !== undefined) {
+            layer_options = layer_options(feature);
+        }
+
         if (!layer_options.pointToLayer) {
             layer_options.pointToLayer = function (featureData, latlng) {
                 return new L.CircleMarker(latlng, { radius : 5 });

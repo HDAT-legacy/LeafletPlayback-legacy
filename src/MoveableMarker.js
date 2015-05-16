@@ -4,9 +4,11 @@ L.Playback.MoveableMarker = L.Marker.extend({
     initialize: function (startLatLng, options, feature) {    
         var marker_options = options.marker || {};
         this._feature =  feature;
-
-        marker_options = marker_options(feature);
         
+        if (jQuery !== undefined){
+            marker_options = marker_options(feature);
+        }
+
         L.Marker.prototype.initialize.call(this, startLatLng, marker_options);
         
         this.popupContent = '';
