@@ -655,10 +655,7 @@ L.Playback.PlayControl = L.Control.extend({
 
         var playControl = L.DomUtil.create('div', 'playControl', this._container);
 
-
         this._button = L.DomUtil.create('button', '', playControl);
-        this._button.innerHTML = 'Play';
-
 
         var stop = L.DomEvent.stopPropagation;
 
@@ -672,11 +669,11 @@ L.Playback.PlayControl = L.Control.extend({
         function play(){
             if (playback.isPlaying()) {
                 playback.stop();
-                self._button.innerHTML = 'Play';
+                self._button.classList.toggle('pause')
             }
             else {
                 playback.start();
-                self._button.innerHTML = 'Stop';
+                self._button.classList.toggle('pause')
             }                
         }
 
@@ -756,21 +753,12 @@ L.Playback.DataStream = L.Class.extend({
     },
 
     getDataFull : function(trackID, addData) {
-        // some firebase or socket code, for now window with 
-        // mocking asynchronicity (for latency) with timeout
-        var asyncMock = function (trackID){
-            var track = window.allTracks[trackID];
-            addData(track, this.getTime());
-        };
-
-        window.setTimeout(asyncMock, 10, trackID, addtrack);
-
         return track;
     },
 
-    appropriateTracks : function(dataLight, previousData, timestamp){
+    appropriateTracks : function(dataLight, previousData, cursor){
         // Check dataLight for suitable tracks
-        var appropriateTracks = dataRange.map(function(track, index){
+        var appropriateTracks = dataLight.map(function(track, index){
             if (    timestamp > track.startTime 
                 &&  timestamp < track.endTime) {
                 return track;

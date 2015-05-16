@@ -60,8 +60,7 @@ L.Playback.PlayControl = L.Control.extend({
 
         var playControl = L.DomUtil.create('div', 'playControl', this._container);
 
-        this._button = L.DomUtil.create('button', 'sliderbutton', playControl);
-        self._button.classList.add('playbutton');
+        this._button = L.DomUtil.create('button', '', playControl);
 
         var stop = L.DomEvent.stopPropagation;
 
@@ -75,15 +74,11 @@ L.Playback.PlayControl = L.Control.extend({
         function play(){
             if (playback.isPlaying()) {
                 playback.stop();
-                self._button.classList.remove('pausebutton')
-                self._button.classList.add('playbutton');
-                // self._button.innerHTML = 'Play';
+                self._button.classList.toggle('pause')
             }
             else {
                 playback.start();
-                self._button.classList.remove('playbutton')
-                self._button.classList.add('pausebutton');
-                // self._button.innerHTML = 'Stop';
+                self._button.classList.toggle('pause')
             }                
         }
 
