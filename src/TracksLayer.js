@@ -7,9 +7,7 @@ L.Playback.TracksLayer = L.Class.extend({
     initialize : function (map, options) {
         var layer_options = options.layer || {};
         
-        if (jQuery.isFunction(layer_options)){
-            layer_options = layer_options(feature);
-        }
+        layer_options = layer_options(feature);
         
         if (!layer_options.pointToLayer) {
             layer_options.pointToLayer = function (featureData, latlng) {
