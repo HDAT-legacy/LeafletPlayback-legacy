@@ -28,13 +28,18 @@ L.Playback.Util = L.Class.extend({
     SeasonStr: function(time) {
       var d = new Date((time - 15768000000) * 1000 );
       var m = d.getMonth();
+      var season = '';
+      if ((m >= 12) || (m <= 2)) { season = 'Winter'; };
+      if ((m >= 3) && (m <= 5)) { season = 'Spring'; };
+      if ((m >= 6) && (m <= 8)) { season = 'Summer'; };
+      if ((m >= 9) && (m <= 11)) { season = 'Autumn'; };
+      return season;
+    },
+
+    YearStr: function(time){
+      var d = new Date((time - 15768000000) * 1000 );
       var y = d.getFullYear();
-      if ((m >= 12) || (m <= 2)) { m = 'Winter'; };
-      if ((m >= 3) && (m <= 5)) { m = 'Spring'; };
-      if ((m >= 6) && (m <= 8)) { m = 'Summer'; };
-      if ((m >= 9) && (m <= 11)) { m = 'Autumn'; }; /* Nog even checken */
-      // console.log(m + ' ' + y);
-      return m + ' ' + y;
+      return y;
     },
 
     ParseGPX: function(gpx) {
