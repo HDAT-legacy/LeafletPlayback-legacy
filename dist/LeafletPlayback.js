@@ -606,7 +606,7 @@ L.Playback.DateControl = L.Control.extend({
         dateFormatFn: L.Playback.Util.DateStr,
         seasonFormatFn: L.Playback.Util.SeasonStr,
         timeFormatFn: L.Playback.Util.TimeStr,
-        yearFormatFN: L.Playback.Util.YearStr
+        yearFormatFn: L.Playback.Util.YearStr
     },
 
     initialize : function (playback, options) {
@@ -615,7 +615,8 @@ L.Playback.DateControl = L.Control.extend({
     },
 
     onAdd : function (map) {
-        this._container = L.DomUtil.create('div', 'timebar');
+        // this._container = L.DomUtil.create('div', 'timebar');
+        this._container = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded');
 
         var self = this;
         var playback = this.playback;
