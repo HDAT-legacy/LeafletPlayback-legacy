@@ -16,22 +16,22 @@ L.Playback.DateControl = L.Control.extend({
 
     onAdd : function (map) {
         // this._container = L.DomUtil.create('div', 'timebar');
-        this._container = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded');
+        this._container = L.DomUtil.create('div', 'hdat-control-season');
 
         var self = this;
         var playback = this.playback;
         var time = playback.getTime();
 
-        var datetime = L.DomUtil.create('div', 'datetimeControl', this._container);
+        var datetime = L.DomUtil.create('div', '', this._container);
 
         // date time
-        this._season = L.DomUtil.create('p', 'season', datetime);
+        this._season = L.DomUtil.create('p', '', datetime);
 
         this._season.innerHTML = this.options.seasonFormatFn(time) + ' ' + this.options.yearFormatFn(time);
        
         // setup callback
         playback.addCallback(function (ms) {
-            self._season.innerHTML = self.options.seasonFormatFn(ms);
+            self._season.innerHTML = self.options.seasonFormatFn(ms) + ' ' + this.options.yearFormatFn(time);
         });
 
         return this._container;
@@ -40,7 +40,7 @@ L.Playback.DateControl = L.Control.extend({
     
 L.Playback.PlayControl = L.Control.extend({
     options : {
-        position : 'bottomright'
+        position : 'bottomleft'
     },
 
     initialize : function (playback) {
@@ -48,13 +48,13 @@ L.Playback.PlayControl = L.Control.extend({
     },
 
     onAdd : function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded');
+        this._container = L.DomUtil.create('div', 'hdat-control-play');
 
         var self = this;
         var playback = this.playback;
         playback.setSpeed(100);
 
-        var playControl = L.DomUtil.create('div', 'playControl', this._container);
+        var playControl = L.DomUtil.create('div', '', this._container);
 
         this._button = L.DomUtil.create('button', '', playControl);
 
@@ -84,7 +84,7 @@ L.Playback.PlayControl = L.Control.extend({
     
 L.Playback.SliderControl = L.Control.extend({
     options : {
-        position : 'bottomleft'
+        position : 'bottomright'
     },
 
     initialize : function (playback) {
@@ -92,13 +92,13 @@ L.Playback.SliderControl = L.Control.extend({
     },
 
     onAdd : function (map) {
-        this._container = L.DomUtil.create('div', 'leaflet-control-layers leaflet-control-layers-expanded');
+        this._container = L.DomUtil.create('div', 'hdat-control-timeline');
 
         var self = this;
         var playback = this.playback;
 
         // slider
-        this._slider = L.DomUtil.create('input', 'slider', this._container);
+        this._slider = L.DomUtil.create('input', '', this._container);
         this._slider.type = 'range';
         this._slider.min = playback.getStartTime();
         this._slider.max = playback.getEndTime();
